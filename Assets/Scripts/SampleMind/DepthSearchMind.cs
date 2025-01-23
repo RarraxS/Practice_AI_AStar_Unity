@@ -37,28 +37,40 @@ public class DepthSearchMind : AbstractPathMind
         return Locomotion.MoveDirection.Up;
     }
 
-    private CellInfo DFS(BoardInfo boardInfo, Node cell, CellInfo goal)
+    private CellInfo DFS(BoardInfo boardInfo, Node initCell, CellInfo goal)
     {
         Node nextNode = null;
 
         //Marco U como descubierto.
-        DiscoveredNodes.Add(cell);
+        DiscoveredNodes.Add(initCell);
 
         //Por cada vértce v adyacente a U.
-        CellInfo[] neighbours = cell.info.WalkableNeighbours(boardInfo);
+        CellInfo[] neighbours = initCell.info.WalkableNeighbours(boardInfo);
 
         //if(v no fue visitado)
         for (int i = 0;i < neighbours.Length; i++)
         {
             // padre[v] = u;
-            nextNode = new Node(neighbours[i],cell);
+            nextNode = new Node(neighbours[i], initCell);
 
 
             if (nextNode.info != null) 
             // DFS(g,v);
                 DFS(boardInfo, nextNode, goal);
+
+            if (nextNode.info == goal)
+                break;
+               
+        }
+        if (nextNode.info == goal)
+        {
+            while(nextNode.parent == initCell)
+            {
+                nextNode = nextNode.parent;
+            }
         }
 
-        return nextNode.info;
+            return nextNode.info;
+
     }
 }
