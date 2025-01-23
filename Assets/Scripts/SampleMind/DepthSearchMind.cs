@@ -18,7 +18,7 @@ public class DepthSearchMind : AbstractPathMind
         }
     }
 
-    List<Node> VisitedNodes = new List<Node>();
+    List<CellInfo> VisitedNodes = new List<CellInfo>();
     List<Node> DiscoveredNodes = new List<Node>();
     List<Node> PathNodes = new List<Node>();
 
@@ -43,22 +43,18 @@ public class DepthSearchMind : AbstractPathMind
     {
         //Marco U como descubierto.
         DiscoveredNodes.Add(cell);
-        //Por cada vértcie v adyacente a U.
-        foreach(CellInfo possibleAdjacentCell in boardInfo.CellInfos)
-        {
-            if ((possibleAdjacentCell.RowId == cell.info.RowId) && (possibleAdjacentCell.ColumnId == cell.info.ColumnId - 1) ||
-                (possibleAdjacentCell.RowId == cell.info.RowId) && (possibleAdjacentCell.ColumnId == cell.info.ColumnId + 1) ||
-                (possibleAdjacentCell.RowId == cell.info.RowId - 1) && (possibleAdjacentCell.ColumnId == cell.info.ColumnId) ||
-                (possibleAdjacentCell.RowId == cell.info.RowId + 1) && (possibleAdjacentCell.ColumnId == cell.info.ColumnId))
+        //Por cada vértce v adyacente a U.
+        CellInfo[] neighbours = cell.info.WalkableNeighbours(boardInfo);
+
+            for( int i=0; i < neighbours.Length; i++)
             {
                 //if(v no fue visitado)
-                //{
-                // padre [v] = u;
-                // DFS(g,v);
-                //}
+                if (!VisitedNodes.Contains(neighbours[i]))
+                // padre[v] = u; DFS(g,v);
+                {
+                    
+                }
             }
-        }
-
         //
         return cell.info;
     }
