@@ -1,8 +1,6 @@
 using Assets.Scripts.DataStructures;
 using Assets.Scripts;
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
 public class DepthSearchMind : AbstractPathMind
 {
@@ -18,7 +16,7 @@ public class DepthSearchMind : AbstractPathMind
         }
     }
 
-    List<CellInfo> VisitedNodes = new List<CellInfo>();
+    List<Node> VisitedNodes = new List<Node>();
     List<Node> DiscoveredNodes = new List<Node>();
     List<Node> PathNodes = new List<Node>();
 
@@ -41,21 +39,26 @@ public class DepthSearchMind : AbstractPathMind
 
     private CellInfo DFS(BoardInfo boardInfo, Node cell, CellInfo goal)
     {
+        Node nextNode = null;
+
         //Marco U como descubierto.
         DiscoveredNodes.Add(cell);
+
         //Por cada vértce v adyacente a U.
         CellInfo[] neighbours = cell.info.WalkableNeighbours(boardInfo);
 
-            for( int i=0; i < neighbours.Length; i++)
-            {
-                //if(v no fue visitado)
-                if (!VisitedNodes.Contains(neighbours[i]))
-                // padre[v] = u; DFS(g,v);
-                {
-                    
-                }
-            }
-        //
-        return cell.info;
+        //if(v no fue visitado)
+        for (int i = 0;i < neighbours.Length; i++)
+        {
+            // padre[v] = u;
+            nextNode = new Node(neighbours[i],cell);
+
+
+            if (nextNode.info != null) 
+            // DFS(g,v);
+                DFS(boardInfo, nextNode, goal);
+        }
+
+        return nextNode.info;
     }
 }
