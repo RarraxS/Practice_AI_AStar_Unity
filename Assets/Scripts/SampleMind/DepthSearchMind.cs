@@ -18,7 +18,6 @@ public class DepthSearchMind : AbstractPathMind
 
     List<Node> VisitedNodes = new List<Node>();
     List<Node> DiscoveredNodes = new List<Node>();
-    List<Node> PathNodes = new List<Node>();
 
     public override Locomotion.MoveDirection GetNextMove(BoardInfo boardInfo, CellInfo currentPos, CellInfo[] goals)
     {
@@ -37,40 +36,24 @@ public class DepthSearchMind : AbstractPathMind
         return Locomotion.MoveDirection.Up;
     }
 
-    private CellInfo DFS(BoardInfo boardInfo, Node initCell, CellInfo goal)
+    private CellInfo DFS(BoardInfo boardInfo, Node initNode, CellInfo goal)
     {
         Node nextNode = null;
 
         //Marco U como descubierto.
-        DiscoveredNodes.Add(initCell);
-
+        VisitedNodes.Add(initNode);
         //Por cada vértce v adyacente a U.
-        CellInfo[] neighbours = initCell.info.WalkableNeighbours(boardInfo);
+        CellInfo[] neighbours = initNode.info.WalkableNeighbours(boardInfo);
 
+        foreach (CellInfo neighbour in neighbours) 
+        {
+        
+        }
         //if(v no fue visitado)
-        for (int i = 0;i < neighbours.Length; i++)
-        {
+        
             // padre[v] = u;
-            nextNode = new Node(neighbours[i], initCell);
-
-
-            if (nextNode.info != null) 
+            
             // DFS(g,v);
-                DFS(boardInfo, nextNode, goal);
-
-            if (nextNode.info == goal)
-                break;
-               
-        }
-        if (nextNode.info == goal)
-        {
-            while(nextNode.parent == initCell)
-            {
-                nextNode = nextNode.parent;
-            }
-        }
-
-            return nextNode.info;
 
     }
 }
