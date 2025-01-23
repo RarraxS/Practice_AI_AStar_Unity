@@ -1,6 +1,8 @@
 using Assets.Scripts.DataStructures;
 using Assets.Scripts;
 using System.Collections.Generic;
+using UnityEngine;
+using System.Linq;
 
 public class DepthSearchMind : AbstractPathMind
 {
@@ -16,15 +18,20 @@ public class DepthSearchMind : AbstractPathMind
         }
     }
 
-    List<Node> VisitedNodes = new List<Node>();
-    List<Node> DiscoveredNodes = new List<Node>();
+    List<CellInfo> VisitedNodes = new List<CellInfo>();
+    List<CellInfo> DiscoveredNodes = new List<CellInfo>();
+    List<Node> WayNodes = new List<Node>();
 
     public override Locomotion.MoveDirection GetNextMove(BoardInfo boardInfo, CellInfo currentPos, CellInfo[] goals)
     {
+       
         CellInfo goal = goals[0];
         Node startingPoint = new Node(currentPos, null);
 
-        CellInfo finishingPoint = DFS(boardInfo, startingPoint, goal);
+        if (!goal.Walkable)
+            return Locomotion.MoveDirection.None;
+
+            CellInfo finishingPoint = DFS(boardInfo, startingPoint, goal);
 
         if (finishingPoint.RowId < startingPoint.info.RowId)
             return Locomotion.MoveDirection.Left;
@@ -39,21 +46,36 @@ public class DepthSearchMind : AbstractPathMind
     private CellInfo DFS(BoardInfo boardInfo, Node initNode, CellInfo goal)
     {
         Node nextNode = null;
-
         //Marco U como descubierto.
-        VisitedNodes.Add(initNode);
+        DiscoveredNodes.Add(initNode.info);
+
         //Por cada vértce v adyacente a U.
         CellInfo[] neighbours = initNode.info.WalkableNeighbours(boardInfo);
 
         foreach (CellInfo neighbour in neighbours) 
         {
-        
-        }
-        //if(v no fue visitado)
-        
-            // padre[v] = u;
-            
-            // DFS(g,v);
+            if(neighbour == goal || WayNodes.Count>0)
+            {
+                Debug.Log("He encontrado la meta");
 
+                WayNodes.Add(initNode);
+                break;
+            }
+
+            //if(v no fue visitado)
+            else if(!VisitedNodes.Contains(neighbour) && neighbour!=null && neighbour.ItemInCell == null)
+            {
+                // padre[v] = u;
+                nextNode = new Node(neighbour, initNode);
+                VisitedNodes.Add(initNode.info);
+                DiscoveredNodes.Remove(initNode.info);
+
+                // DFS(g,v);
+                DFS(boardInfo, nextNode, goal);
+            }
+        }
+        if(WayNodes.Count>2) 
+            return WayNodes[WayNodes.Count-2].info;
+        else return null;
     }
 }
