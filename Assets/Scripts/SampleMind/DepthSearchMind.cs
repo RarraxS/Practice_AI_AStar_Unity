@@ -3,6 +3,7 @@ using Assets.Scripts;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using Unity.VisualScripting;
 
 public class DepthSearchMind : AbstractPathMind
 {
@@ -18,15 +19,16 @@ public class DepthSearchMind : AbstractPathMind
         }
     }
 
-    List<CellInfo> VisitedNodes = new List<CellInfo>();
-    List<CellInfo> DiscoveredNodes = new List<CellInfo>();
-    List<Node> WayNodes = new List<Node>();
+    bool foundGoal = false;
+    List<Node> VisitedNodes = new List<Node>();
 
     public override Locomotion.MoveDirection GetNextMove(BoardInfo boardInfo, CellInfo currentPos, CellInfo[] goals)
     {
        
         CellInfo goal = goals[0];
         Node startingPoint = new Node(currentPos, null);
+        VisitedNodes.Clear();
+        foundGoal = false;
 
         if (!goal.Walkable)
             return Locomotion.MoveDirection.None;
@@ -34,48 +36,46 @@ public class DepthSearchMind : AbstractPathMind
             CellInfo finishingPoint = DFS(boardInfo, startingPoint, goal);
 
         if (finishingPoint.RowId < startingPoint.info.RowId)
-            return Locomotion.MoveDirection.Left;
-        else if (finishingPoint.RowId > startingPoint.info.RowId)
-            return Locomotion.MoveDirection.Right;
-        else if (finishingPoint.ColumnId < startingPoint.info.ColumnId)
             return Locomotion.MoveDirection.Down;
+        else if (finishingPoint.RowId > startingPoint.info.RowId)
+            return Locomotion.MoveDirection.Up;
+        else if (finishingPoint.ColumnId < startingPoint.info.ColumnId)
+            return Locomotion.MoveDirection.Left;
 
-        return Locomotion.MoveDirection.Up;
+        return Locomotion.MoveDirection.Right;
     }
 
     private CellInfo DFS(BoardInfo boardInfo, Node initNode, CellInfo goal)
     {
-        Node nextNode = null;
         //Marco U como descubierto.
-        DiscoveredNodes.Add(initNode.info);
+        VisitedNodes.Add(initNode);
 
         //Por cada vértce v adyacente a U.
         CellInfo[] neighbours = initNode.info.WalkableNeighbours(boardInfo);
-
-        foreach (CellInfo neighbour in neighbours) 
+        Node[] adjacentNodes = new Node[neighbours.Length];     ;
+        int i=0;
+        foreach(CellInfo neighbour in neighbours) {
+            if (neighbours[i]!= null){
+                adjacentNodes[i] = new Node(neighbours[i], initNode);
+            }
+            i++;
+        }
+        foreach(Node adjNode in adjacentNodes)
         {
-            if(neighbour == goal || WayNodes.Count>0)
-            {
-                Debug.Log("He encontrado la meta");
-
-                WayNodes.Add(initNode);
+            if(adjNode != null && adjNode.info == goal){
+                VisitedNodes.Add(adjNode);
+                foundGoal = true;
+            }
+            else if(foundGoal){
+                VisitedNodes.Add(initNode);
                 break;
             }
-
-            //if(v no fue visitado)
-            else if(!VisitedNodes.Contains(neighbour) && neighbour!=null && neighbour.ItemInCell == null)
-            {
-                // padre[v] = u;
-                nextNode = new Node(neighbour, initNode);
-                VisitedNodes.Add(initNode.info);
-                DiscoveredNodes.Remove(initNode.info);
-
-                // DFS(g,v);
-                DFS(boardInfo, nextNode, goal);
+            else if (!VisitedNodes.Contains(adjNode) && adjNode != null){
+                DFS(boardInfo, adjNode, goal);
             }
         }
-        if(WayNodes.Count>2) 
-            return WayNodes[WayNodes.Count-2].info;
+        if (VisitedNodes.Count>2) 
+            return VisitedNodes[VisitedNodes.Count-2].info;
         else return null;
     }
 }
