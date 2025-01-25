@@ -6,6 +6,8 @@ using System.Diagnostics;
 
 public class DepthSearchMind : AbstractPathMind
 {
+
+    // En la primera iteración, "saca" el camino, y en la segunda y las venideras, lo sigue.
     class Node
     {
         public CellInfo info;
@@ -20,26 +22,27 @@ public class DepthSearchMind : AbstractPathMind
 
     bool foundGoal = false;
     List<Node> VisitedNodes = new List<Node>();
-    Node priorNode = null;
+    int countNodes = 1;
 
     public override Locomotion.MoveDirection GetNextMove(BoardInfo boardInfo, CellInfo currentPos, CellInfo[] goals)
     {
 
         CellInfo goal = goals[0];
         Node startingPoint = new Node(currentPos, null);
-
-        VisitedNodes.Clear();
+        CellInfo finishingPoint = null;
         foundGoal = false;
 
         if (!goal.Walkable)
             return Locomotion.MoveDirection.None;
-
-        CellInfo finishingPoint = DFS(boardInfo, startingPoint, goal);
-        if (finishingPoint.CellId == "6,14")
+        if (VisitedNodes.Count == 0)
         {
-            UnityEngine.Debug.Log("Prior:" + priorNode.info.CellId);
-            UnityEngine.Debug.Log("Post: " + finishingPoint.CellId);
+            finishingPoint = DFS(boardInfo, startingPoint, goal);
         }
+        else
+            finishingPoint = VisitedNodes[countNodes].info;
+        countNodes++;
+
+
         if (finishingPoint.RowId < startingPoint.info.RowId)
             return Locomotion.MoveDirection.Down;
         else if (finishingPoint.RowId > startingPoint.info.RowId)
@@ -58,33 +61,41 @@ public class DepthSearchMind : AbstractPathMind
         //Por cada vértce v adyacente a U.
         CellInfo[] neighbours = initNode.info.WalkableNeighbours(boardInfo);
         Node[] adjacentNodes = new Node[neighbours.Length]; ;
-        int i = 0;
+        int i = 0, noNullsCount = 0;
         foreach (CellInfo neighbour in neighbours){
             if (neighbours[i] != null){
                 adjacentNodes[i] = new Node(neighbours[i], initNode);
+                noNullsCount++;
             }
             i++;
         }
         foreach (Node adjNode in adjacentNodes){
-            if (adjNode != null && adjNode.info == goal){
-                VisitedNodes.Add(adjNode);
-                foundGoal = true;
-            }
-            else if (foundGoal){
-                VisitedNodes.Add(initNode);
-                break;
-            }
-                  //(!VisitedNodes.Contains(adjNode)
-            else if (adjNode != null){
-                if ((priorNode == null) || (!VisitedNodes.Any(node => node.info.CellId == adjNode.info.CellId) && (adjNode.info.CellId != priorNode.info.CellId))){
-                    
-                    priorNode = initNode;
+            if(adjNode != null)
+            {
+                if (adjNode.info == goal)
+                {
+                    VisitedNodes.Add(adjNode);
+                    foundGoal = true;
+                }
+                else if (foundGoal)
+                {
+                    VisitedNodes.Add(initNode);
+                    break;
+                }
+                //(!VisitedNodes.Contains(adjNode)
+                else if (!VisitedNodes.Any(node => node.info.CellId == adjNode.info.CellId))
+                {       
+                    DFS(boardInfo, adjNode, goal);
+                }
+                else if(noNullsCount==1 && adjNode.info != null)
+                {
                     DFS(boardInfo, adjNode, goal);
                 }
             }
+           
         }
         if (VisitedNodes.Count > 2)
-            return VisitedNodes[VisitedNodes.Count - 2].info;
+            return VisitedNodes[1].info;
         else return null;
     }
 }
