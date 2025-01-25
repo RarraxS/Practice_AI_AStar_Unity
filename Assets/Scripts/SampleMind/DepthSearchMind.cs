@@ -2,9 +2,6 @@ using Assets.Scripts.DataStructures;
 using Assets.Scripts;
 using System.Collections.Generic;
 using System.Linq;
-using System.Diagnostics;
-using System;
-using JetBrains.Annotations;
 
 public class DepthSearchMind : AbstractPathMind
 {
@@ -63,16 +60,19 @@ public class DepthSearchMind : AbstractPathMind
         //Por cada vértce v adyacente a U.
         CellInfo[] neighbours = initNode.info.WalkableNeighbours(boardInfo);
         Node[] adjacentNodes = new Node[neighbours.Length]; ;
-        int i = 0, noNullsCount = 0;
+        int count = 0, noNullsCount = 0, adjacentVisitedNodes = 0;
         foreach (CellInfo neighbour in neighbours){
-            if (neighbours[i] != null){
-                adjacentNodes[i] = new Node(neighbours[i], initNode);
+            if (neighbours[count] != null){
+                adjacentNodes[count] = new Node(neighbours[count], initNode);
                 noNullsCount++;
             }
-            i++;
+            else if (VisitedNodes.Any(node => node.info.CellId == neighbour.CellId))
+            {
+                adjacentVisitedNodes++;
+            }
+            count++;
         }
         foreach (Node adjNode in adjacentNodes){
-            int adjacentVisitedNodes = 0;
 
             if(adjNode != null)
             {
@@ -92,11 +92,6 @@ public class DepthSearchMind : AbstractPathMind
                 {       
                     DFS(boardInfo, adjNode, goal);
                 }
-                else if (VisitedNodes.Any(node => node.info.CellId == adjNode.info.CellId))
-                {
-                    adjacentVisitedNodes ++;
-                }
-
             }
         }
         if (VisitedNodes.Count > 2)
