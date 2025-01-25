@@ -60,16 +60,12 @@ public class DepthSearchMind : AbstractPathMind
         //Por cada vértce v adyacente a U.
         CellInfo[] neighbours = initNode.info.WalkableNeighbours(boardInfo);
         Node[] adjacentNodes = new Node[neighbours.Length]; ;
-        int count = 0, noNullsCount = 0, adjacentVisitedNodes = 0;
+        int count = 0, noNullsCount = 0;
         foreach (CellInfo neighbour in neighbours){
             if (neighbours[count] != null){
                 adjacentNodes[count] = new Node(neighbours[count], initNode);
                 noNullsCount++;
             }
-            //else if (VisitedNodes.Count>0) && (VisitedNodes.Any(node => node.info.CellId == neighbour.CellId))
-            //{
-            //    adjacentVisitedNodes++;
-            //}
             count++;
         }
         foreach (Node adjNode in adjacentNodes){
