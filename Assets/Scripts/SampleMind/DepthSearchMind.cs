@@ -66,10 +66,10 @@ public class DepthSearchMind : AbstractPathMind
                 adjacentNodes[count] = new Node(neighbours[count], initNode);
                 noNullsCount++;
             }
-            else if (VisitedNodes.Any(node => node.info.CellId == neighbour.CellId))
-            {
-                adjacentVisitedNodes++;
-            }
+            //else if (VisitedNodes.Count>0) && (VisitedNodes.Any(node => node.info.CellId == neighbour.CellId))
+            //{
+            //    adjacentVisitedNodes++;
+            //}
             count++;
         }
         foreach (Node adjNode in adjacentNodes){
