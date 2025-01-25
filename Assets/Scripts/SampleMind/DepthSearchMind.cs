@@ -3,6 +3,8 @@ using Assets.Scripts;
 using System.Collections.Generic;
 using System.Linq;
 using System.Diagnostics;
+using System;
+using JetBrains.Annotations;
 
 public class DepthSearchMind : AbstractPathMind
 {
@@ -70,6 +72,8 @@ public class DepthSearchMind : AbstractPathMind
             i++;
         }
         foreach (Node adjNode in adjacentNodes){
+            int adjacentVisitedNodes = 0;
+
             if(adjNode != null)
             {
                 if (adjNode.info == goal)
@@ -83,16 +87,16 @@ public class DepthSearchMind : AbstractPathMind
                     break;
                 }
                 //(!VisitedNodes.Contains(adjNode)
-                else if (!VisitedNodes.Any(node => node.info.CellId == adjNode.info.CellId))
+                else if (!VisitedNodes.Any(node => node.info.CellId == adjNode.info.CellId) || noNullsCount == 1 )
                 {       
                     DFS(boardInfo, adjNode, goal);
                 }
-                else if(noNullsCount==1 && adjNode.info != null)
+                else if (VisitedNodes.Any(node => node.info.CellId == adjNode.info.CellId))
                 {
-                    DFS(boardInfo, adjNode, goal);
+                    adjacentVisitedNodes ++;
                 }
+
             }
-           
         }
         if (VisitedNodes.Count > 2)
             return VisitedNodes[1].info;
