@@ -29,29 +29,23 @@ public class DepthSearchMindMKII : AbstractPathMind
 
         if (!goals[0].Walkable)
             return Locomotion.MoveDirection.None;
+
         if (VisitedNodes.Count == 0)
-        {
-            finishingPoint = DFS(boardInfo, startingPoint, goals[0]);
-            UnityEngine.Debug.Log(finishingPoint.CellId);
-        }
+            finishingPoint = DS(boardInfo, startingPoint, goals[0]);
         else
         {
             finishingPoint = VisitedNodes[countNodes].info;
             countNodes++;
-            UnityEngine.Debug.Log(finishingPoint.CellId);
         }
 
-        if (finishingPoint.RowId < startingPoint.info.RowId)
-            return Locomotion.MoveDirection.Down;
-        else if (finishingPoint.RowId > startingPoint.info.RowId)
-            return Locomotion.MoveDirection.Up;
-        else if (finishingPoint.ColumnId < startingPoint.info.ColumnId)
-            return Locomotion.MoveDirection.Left;
+        if (finishingPoint.RowId < startingPoint.info.RowId) return Locomotion.MoveDirection.Down;
+        else if (finishingPoint.RowId > startingPoint.info.RowId) return Locomotion.MoveDirection.Up;
+        else if (finishingPoint.ColumnId < startingPoint.info.ColumnId) return Locomotion.MoveDirection.Left;
 
         return Locomotion.MoveDirection.Right;
     }
 
-    private CellInfo DFS(BoardInfo boardInfo, Node initNode, CellInfo goal)
+    private CellInfo DS(BoardInfo boardInfo, Node initNode, CellInfo goal)
     {
         VisitedNodes.Add(initNode);
 
@@ -71,7 +65,7 @@ public class DepthSearchMindMKII : AbstractPathMind
             else if (neighbor!=null&&!VisitedNodes.Any(node => node.info.CellId == neighbor.CellId))
             {
                 Node nextNode = new Node(neighbor, initNode);
-                DFS(boardInfo, nextNode, goal);
+                DS(boardInfo, nextNode, goal);
             }
             else
             {
@@ -86,7 +80,7 @@ public class DepthSearchMindMKII : AbstractPathMind
                 if(neighbor != null && VisitedNodes.Any(node => node.info.CellId == neighbor.CellId))
                 {
                     Node nextNode = new Node(initNode.parent.info, initNode.parent.parent);
-                    DFS(boardInfo, nextNode, goal);
+                    DS(boardInfo, nextNode, goal);
                 }
             }
         }

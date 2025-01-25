@@ -54,40 +54,24 @@ public class DepthSearchMind : AbstractPathMind
 
     private CellInfo DFS(BoardInfo boardInfo, Node initNode, CellInfo goal)
     {
-        //Marco U como descubierto.
         VisitedNodes.Add(initNode);
 
-        //Por cada vértce v adyacente a U.
         CellInfo[] neighbours = initNode.info.WalkableNeighbours(boardInfo);
-        Node[] adjacentNodes = new Node[neighbours.Length]; ;
-        int count = 0, noNullsCount = 0;
-        foreach (CellInfo neighbour in neighbours){
-            if (neighbours[count] != null){
-                adjacentNodes[count] = new Node(neighbours[count], initNode);
-                noNullsCount++;
-            }
-            count++;
-        }
-        foreach (Node adjNode in adjacentNodes){
 
-            if(adjNode != null)
+        foreach (CellInfo neighbor in neighbours)
+        {
+            if (neighbor == goal)
             {
-                if (adjNode.info == goal)
-                {
-                    VisitedNodes.Add(adjNode);
-                    foundGoal = true;
-                    break;
-                }
-                else if(foundGoal)
-                {
-                    break;
-                }
-
-                //(!VisitedNodes.Contains(adjNode)
-                else if (!VisitedNodes.Any(node => node.info.CellId == adjNode.info.CellId) || noNullsCount == 1 )
-                {       
-                    DFS(boardInfo, adjNode, goal);
-                }
+                Node goalN = new Node(neighbor, initNode);
+                VisitedNodes.Add(goalN);
+                foundGoal = true;
+                break;
+            }
+            else if (foundGoal) break;
+            else if (neighbor != null && !VisitedNodes.Any(node => node.info.CellId == neighbor.CellId))
+            {
+                Node nextNode = new Node(neighbor, initNode);
+                DFS(boardInfo, nextNode, goal);
             }
         }
         if (VisitedNodes.Count > 2)
