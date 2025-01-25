@@ -80,12 +80,13 @@ public class DepthSearchMind : AbstractPathMind
                 {
                     VisitedNodes.Add(adjNode);
                     foundGoal = true;
-                }
-                else if (foundGoal)
-                {
-                    VisitedNodes.Add(initNode);
                     break;
                 }
+                else if(foundGoal)
+                {
+                    break;
+                }
+
                 //(!VisitedNodes.Contains(adjNode)
                 else if (!VisitedNodes.Any(node => node.info.CellId == adjNode.info.CellId) || noNullsCount == 1 )
                 {       
