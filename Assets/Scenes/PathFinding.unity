@@ -166,6 +166,10 @@ PrefabInstance:
       propertyPath: PathController
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 114932959840203910, guid: 6d072085023a9cc469645640b49ab789, type: 3}
+      propertyPath: speed
+      value: 5
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 114736227204412482, guid: 6d072085023a9cc469645640b49ab789, type: 3}
     - {fileID: 114919295397911956, guid: 6d072085023a9cc469645640b49ab789, type: 3}
