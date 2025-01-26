@@ -53,31 +53,17 @@ public class DepthFirstSearchMindMKV : AbstractPathMind
         PathNodes.Add(currentNode);
         currentNode.visited = true;
 
-        int visitedAdjacentNodes = 0;
-
         CellInfo[] neighbours = currentNode.info.WalkableNeighbours(boardInfo);
 
         foreach (CellInfo neighbor in neighbours)
         {
-            if (neighbor == goal)
+            if(neighbor != null && (!PathNodes.Any(node => node.visited)))
             {
-                PathNodes.Add(new Node(neighbor, currentNode, false));
-                foundGoal = true;
-                break;
+                DFS(boardInfo, new Node(neighbor, currentNode, false), goal);
+                PathNodes.Add(currentNode);
             }
         }
-        foreach (CellInfo neighbor in neighbours)
-        {
-            if (foundGoal) break;
-
-            if ((neighbor != null) && (!PathNodes.Any(node => node.info.CellId == neighbor.CellId && node.visited)))
-                DFS(boardInfo, new Node(neighbor, currentNode, false), goal);
-
-            else visitedAdjacentNodes++;
-        }
-            if (visitedAdjacentNodes == 4) PathNodes.Remove(currentNode);
-            else if (visitedAdjacentNodes == 3)
-                DFS(boardInfo, new Node(currentNode.parent.info, currentNode.parent.parent, false), goal);
-        return PathNodes[1].info;
+                
+           return PathNodes[1].info;
     }
 }
