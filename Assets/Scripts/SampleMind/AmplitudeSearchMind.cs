@@ -47,6 +47,6 @@ public class AmplitudeSearchMind : AbstractPathMind
 
     private CellInfo AS(BoardInfo boardInfo, Node initNode, CellInfo goal)
     {
-        
+        return initNode.info;
     }
 }
