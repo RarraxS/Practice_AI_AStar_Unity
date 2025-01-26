@@ -1,9 +1,11 @@
-using Assets.Scripts;
 using Assets.Scripts.DataStructures;
+using Assets.Scripts;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
-public class DepthFirstSearchMindMKIV : AbstractPathMind
+public class AStarMind : AbstractPathMind
 {
     class Node
     {
@@ -24,7 +26,7 @@ public class DepthFirstSearchMindMKIV : AbstractPathMind
 
     public override Locomotion.MoveDirection GetNextMove(BoardInfo boardInfo, CellInfo currentPos, CellInfo[] goals)
     {
-        CellInfo finishingPoint = new CellInfo(1,0);
+        CellInfo finishingPoint = new CellInfo(1, 0);
         foundGoal = false;
 
         if (PathNodes.Count == 0)
@@ -61,7 +63,7 @@ public class DepthFirstSearchMindMKIV : AbstractPathMind
         {
             if (neighbor == goal)
             {
-                PathNodes.Add(new Node(neighbor, currentNode,false));
+                PathNodes.Add(new Node(neighbor, currentNode, false));
                 foundGoal = true;
                 break;
             }
@@ -83,4 +85,4 @@ public class DepthFirstSearchMindMKIV : AbstractPathMind
         return PathNodes[1].info;
     }
 }
-    
+
