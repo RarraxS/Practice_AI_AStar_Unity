@@ -19,7 +19,7 @@ public class DepthFirstSearchMindMKV : AbstractPathMind
     bool foundGoal = false;
     List<Node> PathNodes = new List<Node>();
     int countNodes = 1;
-
+        
     public override Locomotion.MoveDirection GetNextMove(BoardInfo boardInfo, CellInfo currentPos, CellInfo[] goals)
     {
         DFS(boardInfo, new Node(currentPos, null), goals[0]);
