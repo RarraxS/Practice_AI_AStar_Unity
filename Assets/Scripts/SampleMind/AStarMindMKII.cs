@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System;
 using System.Linq;
 
-public class AStarMind : AbstractPathMind
+public class AStarMindMKII : AbstractPathMind
 {
     public class Node
     {
@@ -17,7 +17,7 @@ public class AStarMind : AbstractPathMind
         {
             this.g = _g;
             this.h = _h;
-            this.f = this.g+this.h;
+            this.f = this.g + this.h;
             this.cell = _cell;
             this.parent = _parent;
         }
@@ -27,13 +27,13 @@ public class AStarMind : AbstractPathMind
     int count = 0;
     public override Locomotion.MoveDirection GetNextMove(BoardInfo boardInfo, CellInfo currentPos, CellInfo[] goals)
     {
-        if(count == 0)
+        if (count == 0)
         {
             AStar(boardInfo, new Node(0, Heuristic(currentPos, goals[0]), currentPos, null), goals[0]);
             count++;
         }
 
-        
+
         if (!goals[0].Walkable || !currentPos.Walkable)
         {
             UnityEngine.Debug.Log("Meta imposible de alcanzar");
@@ -56,47 +56,52 @@ public class AStarMind : AbstractPathMind
     {
         List<Node> openList = new List<Node> { initNode };
         Node actualNode = initNode;
-        while(actualNode.cell.CellId != goal.CellId && openList.Count != 0)
+        int unsteppableAdjacentNodes = 0;
+        while (actualNode.cell.CellId != goal.CellId && openList.Count != 0)
         {
+            unsteppableAdjacentNodes = 0;
+
             actualNode = openList.OrderBy(n => n.f).First();
 
             openList.Remove(actualNode);
             closedList.Add(actualNode);
             CellInfo[] neighbours = actualNode.cell.WalkableNeighbours(board);
             openList.Clear();
-            for(int count=0; count<neighbours.Length; count++)
+            for (int count = 0; count < neighbours.Length; count++)
             {
                 Node adjacentNode = null;
 
-                if(neighbours[count] != null)
+                if (neighbours[count] != null)
                 {
-
-                
                     adjacentNode = new Node(Distance(neighbours[count], initNode.cell), Heuristic(neighbours[count], goal), neighbours[count], actualNode);
 
-                    if (closedList.Any(node => node.cell.CellId == adjacentNode.cell.CellId))
+                    if (closedList.Any(node => node.cell.CellId == neighbours[count].CellId) || openList.Any(node => node.cell.CellId == neighbours[count].CellId))
                     {
+                        unsteppableAdjacentNodes++;
                         continue;
                     }
-                    if (!openList.Contains(adjacentNode))
-                    {
-                        openList.Add(adjacentNode);
-                    }
+
+                    if (!openList.Any(node => node.cell.CellId == neighbours[count].CellId)) openList.Add(adjacentNode);
+
                     if (adjacentNode.cell.CellId == goal.CellId)
                     {
                         closedList.Add(adjacentNode);
                         break;
                     }
                 }
+                else unsteppableAdjacentNodes++;
             }
+            if (unsteppableAdjacentNodes == 4)
+                openList.Add(actualNode.parent);
+            continue;
         }
     }
 
-    public int Heuristic(CellInfo current,CellInfo goal)
+    public int Heuristic(CellInfo current, CellInfo goal)
     {
         return (int)(MathF.Abs(goal.RowId - current.RowId) + MathF.Abs(goal.ColumnId - current.ColumnId));
     }
-    public int Distance(CellInfo current,CellInfo start)
+    public int Distance(CellInfo current, CellInfo start)
     {
         return (int)(MathF.Abs(start.RowId - current.RowId) + MathF.Abs(start.ColumnId - current.ColumnId));
     }
