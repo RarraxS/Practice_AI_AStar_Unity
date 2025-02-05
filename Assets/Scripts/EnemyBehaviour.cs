@@ -11,19 +11,20 @@ namespace Assets.Scripts
     public class EnemyBehaviour : CharacterBehaviour
     {
 
-
+        //-- CurrentPosition returns the enemy's current position as a CellInfo object.
         public CellInfo CurrentPosition()
         {
             return BoardManager.boardInfo.CellInfos[(int)transform.position.x, (int)transform.position.y];
         }
 
+
         void Awake()
         {
 
-            PathController = GetComponentInChildren<AbstractPathMind>();
-            PathController.SetCharacter(this);
-            LocomotionController = GetComponent<Locomotion>();
-            LocomotionController.SetCharacter(this);
+            PathController = GetComponentInChildren<AbstractPathMind>();//-- Get the pathfinding controller from a child object.
+            PathController.SetCharacter(this);//--  Set the current enemy (this) to the PathController.
+            LocomotionController = GetComponent<Locomotion>();//-- Get the Locomotion controller attached to this GameObject.
+            LocomotionController.SetCharacter(this);//--  Set the current enemy to the Locomotion controller.
 
 
 
@@ -31,7 +32,9 @@ namespace Assets.Scripts
 
         void Update()
         {
+            //-- If BoardManager is not assigned, exit the method.
             if (BoardManager == null) return;
+            //-- Check if the enemy needs to move.
             if (LocomotionController.MoveNeed)
             {
 
