@@ -6,6 +6,7 @@ namespace Assets.Scripts
 {
     public class Locomotion : MonoBehaviour
     {
+        //Enum to define possible directions.
         public enum MoveDirection
         {
             Up,
@@ -15,13 +16,18 @@ namespace Assets.Scripts
             None
         }
 
+        //-- The target cell to which the character is moving
         private CellInfo end;
         private Rigidbody2D rb;
         public float speed=1.0f;
-        
+
+        //-- The last position the character was at before moving.
         private CellInfo last;
 
+        //--  Reference to the PathMind
         public AbstractPathMind MindController { get; set; }
+
+        //-- Reference to the board's information.
         private BoardInfo Board { get { return character.BoardManager.boardInfo; } }
 
         public bool keyControl = false;
@@ -101,6 +107,7 @@ namespace Assets.Scripts
             }
         }
 
+        //-- Checks if the character has reached the destination cell
         public bool AtDestination()
         {
             if (last == null || end == null) return true;
@@ -116,6 +123,7 @@ namespace Assets.Scripts
             }
         }
 
+        //--  Sets the character's new movement direction based on the input
         public void SetNewDirection(MoveDirection newDirection)
         {
             if (end == null)
@@ -161,6 +169,8 @@ namespace Assets.Scripts
             }
         }
 
+
+        
         public bool MoveNeed { get; set; }
 
         public CellInfo CurrentPosition()

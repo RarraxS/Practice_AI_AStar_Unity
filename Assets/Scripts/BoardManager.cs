@@ -40,19 +40,19 @@ namespace Assets.Scripts
         public GameObject enemyTile; //Enemy Tile
         public GameObject outerWallTile; //Array of outer tile prefabs.
 
-        private Transform boardHolder; //A variable to store a reference to the transform of our Board object.
-        public BoardInfo boardInfo;
+        private Transform boardHolder; //-- A variable to store a reference to the transform of our Board object.
+        public BoardInfo boardInfo;//-- info about the board.
 
         public const float TileSize = 1.0f;
 
-
+        //-- Method to setup the scene. Receives a seed for randomness
         public void SetupScene(int seed, bool forPlanner, int enemyCount)
         {
             this.boardInfo = new BoardInfo(columns, rows, this);
             this.boardInfo.SetupBoard(seed, forPlanner, this.wallCount, this.leverCount, enemyCount);
         }
 
-
+        //-- Method to generate the map with the defined objects
         public void GenerateMap()
         {
             this.boardInfo.CreateGameObject(this);

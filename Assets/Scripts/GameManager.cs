@@ -40,7 +40,7 @@ namespace Assets.Scripts
         public void Start()
         {
             
-            var character= GameObject.Find("Character").GetComponent<CharacterBehaviour>();
+            var character= GameObject.Find("Character").GetComponent<CharacterBehaviour>();//--  Get the character from the Character Behaviour
             character.BoardManager= BoardManager;
             character.SetCurrentTarget(BoardManager.boardInfo.Exit);
         }
