@@ -3,26 +3,10 @@ using Assets.Scripts;
 using System.Collections.Generic;
 using System;
 using System.Linq;
+using UnityEngine;
 
 public class AStarMind : AbstractPathMind
 {
-    public class Node
-    {
-        public int g;
-        public int h;
-        public int f;
-        public CellInfo cell;
-        public Node parent;
-        public Node(int _g, int _h, CellInfo _cell, Node _parent)
-        {
-            this.g = _g;
-            this.h = _h;
-            this.f = this.g+this.h;
-            this.cell = _cell;
-            this.parent = _parent;
-        }
-    }
-
     List<Node> closedList = new List<Node>();
     int count = 0;
     public override Locomotion.MoveDirection GetNextMove(BoardInfo boardInfo, CellInfo currentPos, CellInfo[] goals)
@@ -36,14 +20,14 @@ public class AStarMind : AbstractPathMind
         
         if (!goals[0].Walkable || !currentPos.Walkable)
         {
-            UnityEngine.Debug.Log("Meta imposible de alcanzar");
+            Debug.Log("Meta imposible de alcanzar");
             return Locomotion.MoveDirection.None;
         }
         else
         {
             CellInfo nextPosition = closedList[count].cell;
             count++;
-            UnityEngine.Debug.Log(nextPosition.CellId);
+            Debug.Log(nextPosition.CellId);
             if (nextPosition.RowId < currentPos.RowId) return Locomotion.MoveDirection.Down;
             else if (nextPosition.RowId > currentPos.RowId) return Locomotion.MoveDirection.Up;
             else if (nextPosition.ColumnId < currentPos.ColumnId) return Locomotion.MoveDirection.Left;
