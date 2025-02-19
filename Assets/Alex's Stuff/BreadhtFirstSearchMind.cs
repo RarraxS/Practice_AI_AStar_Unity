@@ -1,9 +1,8 @@
 using Assets.Scripts;
 using Assets.Scripts.DataStructures;
-using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
-using UnityEngine;
 
 public class BreadhtFirstSearchMind : AbstractPathMind
 {
@@ -18,25 +17,28 @@ public class BreadhtFirstSearchMind : AbstractPathMind
         }
     }
 
-    List<CellInfo> Path = new List<CellInfo> ();
-    bool foundGoal=false;
-    int countNodes=0;
+    List<CellInfo> Path = new List<CellInfo>();
+    int countNodes = 0;
+
     public override Locomotion.MoveDirection GetNextMove(BoardInfo boardInfo, CellInfo currentPos, CellInfo[] goals)
     {
-        Path = BreadthFirstSearch(currentPos, boardInfo, goals[0]);
-        CellInfo finishingPoint = new CellInfo(1, 0);
-        foundGoal = false;
-
-        if (!goals[0].Walkable || !currentPos.Walkable || Path.Count == 1)
+        if (countNodes == 0)
         {
-            UnityEngine.Debug.Log("Meta en obstáculo");
+            Path = BreadthFirstSearch(currentPos, boardInfo, goals[0]);
+        }
+
+        if(!goals[0].Walkable || !currentPos.Walkable || Path[Path.Count-1].CellId != goals[0].CellId)
+        {
+            if(countNodes == 0)
+                UnityEngine.Debug.Log("No hay camino disponible o meta no accesible.");
+
+            countNodes = 1;
+
             return Locomotion.MoveDirection.None;
         }
-        else
-        {
-            finishingPoint = Path[countNodes];
-            countNodes++;
-        }
+
+        CellInfo finishingPoint = Path[countNodes];
+        countNodes++;
 
         if (finishingPoint.RowId < currentPos.RowId) return Locomotion.MoveDirection.Down;
         else if (finishingPoint.RowId > currentPos.RowId) return Locomotion.MoveDirection.Up;
@@ -48,25 +50,18 @@ public class BreadhtFirstSearchMind : AbstractPathMind
     public List<CellInfo> BreadthFirstSearch(CellInfo start, BoardInfo board, CellInfo goal)
     {
         Node priorNode = null;
-        // List to store the visited nodes
         List<CellInfo> visited = new List<CellInfo>();
+        Queue<Node> queue = new Queue<Node>();
+        queue.Enqueue(new Node(start, null));
 
-        // Queue to store the nodes to be visited
-        Queue<CellInfo> queue = new Queue<CellInfo>();
-
-        // Add the starting node to the queue
-        queue.Enqueue(start);
-
-        // Loop until the queue is empty
         while (queue.Count > 0)
         {
-            // Dequeue a node from the queue
-            Node node = new Node(queue.Dequeue(), priorNode);
+            Node node = queue.Dequeue();
             priorNode = node;
-            // If the node has not been visited
+
+            // Verificar si la celda ya fue visitada
             if (!visited.Any(example => example.CellId == node.info.CellId))
             {
-                // Mark the node as visited
                 visited.Add(node.info);
 
                 if (node.info.CellId == goal.CellId)
@@ -75,28 +70,32 @@ public class BreadhtFirstSearchMind : AbstractPathMind
                     break;
                 }
 
-                // Enqueue the neighbors of the node
+                // Encolar los vecinos que son válidos
                 foreach (var neighbor in node.info.WalkableNeighbours(board))
                 {
-                    if(neighbor!=null)
-                        queue.Enqueue(neighbor);
+                    if (neighbor != null && !visited.Any(n => n.CellId == neighbor.CellId))
+                    {
+                        queue.Enqueue(new Node(neighbor, node));
+                    }
                 }
             }
         }
 
-        // Return the list of visited nodes
         return Reconstruct(priorNode);
     }
 
     public List<CellInfo> Reconstruct(Node current)
     {
-        var path = new List<CellInfo>();
-        while (current != null)
+        List<CellInfo> path = new List<CellInfo>();
+
+        while (current.parent != null)
         {
             path.Add(current.info);
             current = current.parent;
         }
+
         path.Reverse();
         return path;
     }
 }
+
