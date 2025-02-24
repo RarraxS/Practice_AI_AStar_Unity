@@ -52,6 +52,10 @@ public class AStarPathFinding : AbstractPathMind
 
     private void CalculateCosts(BoardInfo _boardInfo)
     {
+        // Loader->GameManager->Exit;
+
+        //CellInfo ci = _boardInfo.Exit();
+
         //BoardInfo _boardInfo = new BoardInfo(1, 1, _boardManager);
 
 
