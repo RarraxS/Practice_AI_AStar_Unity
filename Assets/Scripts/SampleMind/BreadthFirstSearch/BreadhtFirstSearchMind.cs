@@ -7,28 +7,28 @@ using System.Linq;
 
 public class BreadhtFirstSearchMind : AbstractPathMind
 {
-    List<CellInfo> Path = new List<CellInfo>();
-    int countNodes = 0;
-
-    public override Locomotion.MoveDirection GetNextMove(BoardInfo boardInfo, CellInfo currentPos, CellInfo[] goals)
+    Sequencer sequencer = new Sequencer();
+      public override Locomotion.MoveDirection GetNextMove(BoardInfo boardInfo, CellInfo currentPos, CellInfo[] goals)
     {
-        if (countNodes == 0)
+        if (sequencer.count == 0)
         {
-            Path = BreadthFirstSearch(currentPos, boardInfo, boardInfo.Exit);
+            sequencer.List = BreadthFirstSearch(currentPos, boardInfo, boardInfo.Exit);
+            UnityEngine.Debug.Log("Visited nodes: "+sequencer.visitedNodes);
         }
 
-        if(!goals[0].Walkable || !currentPos.Walkable || Path[Path.Count-1].CellId != boardInfo.Exit.CellId)
+        if(!goals[0].Walkable || !currentPos.Walkable || sequencer.List[sequencer.List.Count-1].CellId != boardInfo.Exit.CellId)
         {
-            if(countNodes == 0)
+            if(sequencer.count == 0)
+            {
                 UnityEngine.Debug.Log("No hay camino disponible o meta no accesible.");
-
-            countNodes = 1;
+                sequencer.count = 1;
+            }
 
             return Locomotion.MoveDirection.None;
         }
 
-        CellInfo finishingPoint = Path[countNodes];
-        countNodes++;
+        CellInfo finishingPoint = sequencer.List[sequencer.count];
+        sequencer.count++;
 
         if (finishingPoint.RowId < currentPos.RowId) return Locomotion.MoveDirection.Down;
         else if (finishingPoint.RowId > currentPos.RowId) return Locomotion.MoveDirection.Up;
@@ -48,7 +48,7 @@ public class BreadhtFirstSearchMind : AbstractPathMind
         {
             Node node = queue.Dequeue();
             priorNode = node;
-
+            sequencer.visitedNodes++;
             // Verificar si la celda ya fue visitada
             if (!visited.Any(example => example.CellId == node.cell.CellId))
             {
