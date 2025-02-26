@@ -61,7 +61,7 @@ public class AStarPathFinding : AbstractPathMind
         int _totalCost = 0;
 
         CellInfo _initialPosition = new CellInfo(0, 0);
-        //Node _initialNode = new Node(_totalCost, _initialPosition.WalkCost, _initialPosition, null);
+        Node _initialNode = new Node(_totalCost, _initialPosition.WalkCost, _initialPosition, null);
 
 
         // g = coste desde el inicio hasta ese momento
@@ -71,19 +71,35 @@ public class AStarPathFinding : AbstractPathMind
 
 
         CellInfo _actualCell = new CellInfo(0, 0);
+        Node _actualNode = new Node(_totalCost, 0, _actualCell, null);
+
 
         int _actualColumn = 0, _actualRow = 0;
 
-        Debug.Log("\nColumna actual: " + _actualCell.ColumnId + "\nFila actual: " + _actualCell.RowId);
+        Debug.Log("\nColumna actual: " + _actualColumn + "\nFila actual: " + _actualRow);
 
 
 
+
+
+
+        
+
+        // Todo esto tiene que ir en una funcion que se repite hasta que se encuentra la meta
 
         CellInfo _upperCell = new CellInfo(_actualColumn + 1, _actualRow);
-        CellInfo _lowerCell = new CellInfo(_actualColumn - 1, _actualRow);
-        CellInfo _rightCell = new CellInfo(_actualColumn, _actualRow + 1);
-        CellInfo _leftCell = new CellInfo(_actualColumn, _actualRow - 1);
+        Node _upperNode = new Node(_totalCost, _upperCell.WalkCost, _upperCell, _actualNode);
 
+        CellInfo _lowerCell = new CellInfo(_actualColumn - 1, _actualRow);
+        Node _lowerNode = new Node(_totalCost, _lowerCell.WalkCost, _lowerCell, _actualNode);
+
+        CellInfo _rightCell = new CellInfo(_actualColumn, _actualRow + 1);
+        Node _rightNode = new Node(_totalCost, _rightCell.WalkCost, _rightCell, _actualNode);
+
+        CellInfo _leftCell = new CellInfo(_actualColumn, _actualRow - 1);
+        Node _leftNode = new Node(_totalCost, _leftCell.WalkCost, _leftCell, _actualNode);
+
+        // Move
         if (true)
         {
             //Locomotion.
