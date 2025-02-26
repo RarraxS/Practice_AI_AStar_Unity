@@ -4,19 +4,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
+
 public class BreadhtFirstSearchMind : AbstractPathMind
 {
-    public class Node
-    {
-        public CellInfo info;
-        public Node parent;
-        public Node(CellInfo _info, Node _parent)
-        {
-            this.info = _info;
-            this.parent = _parent;
-        }
-    }
-
     List<CellInfo> Path = new List<CellInfo>();
     int countNodes = 0;
 
@@ -60,18 +50,18 @@ public class BreadhtFirstSearchMind : AbstractPathMind
             priorNode = node;
 
             // Verificar si la celda ya fue visitada
-            if (!visited.Any(example => example.CellId == node.info.CellId))
+            if (!visited.Any(example => example.CellId == node.cell.CellId))
             {
-                visited.Add(node.info);
+                visited.Add(node.cell);
 
-                if (node.info.CellId == goal.CellId)
+                if (node.cell.CellId == goal.CellId)
                 {
                     priorNode = node;
                     break;
                 }
 
                 // Encolar los vecinos que son válidos
-                foreach (var neighbor in node.info.WalkableNeighbours(board))
+                foreach (var neighbor in node.cell.WalkableNeighbours(board))
                 {
                     if (neighbor != null && !visited.Any(n => n.CellId == neighbor.CellId))
                     {
@@ -90,7 +80,7 @@ public class BreadhtFirstSearchMind : AbstractPathMind
 
         while (current.parent != null)
         {
-            path.Add(current.info);
+            path.Add(current.cell);
             current = current.parent;
         }
 

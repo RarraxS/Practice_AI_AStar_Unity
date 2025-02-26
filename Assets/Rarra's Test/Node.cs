@@ -15,4 +15,10 @@ public class Node
         this.cell = _cell;
         this.parent = _parent;
     }
+
+    public Node(CellInfo _cell, Node _parent)
+    {
+        this.cell = _cell;
+        this.parent = _parent;
+    }
 }
