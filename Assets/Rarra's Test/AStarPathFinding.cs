@@ -54,7 +54,7 @@ public class AStarPathFinding : AbstractPathMind
     {
         // Loader->GameManager->Exit;
 
-        //CellInfo ci = _boardInfo.Exit();
+        CellInfo ci = _boardInfo.Exit;
 
         //BoardInfo _boardInfo = new BoardInfo(1, 1, _boardManager);
 

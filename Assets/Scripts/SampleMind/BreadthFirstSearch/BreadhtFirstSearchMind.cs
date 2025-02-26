@@ -24,10 +24,10 @@ public class BreadhtFirstSearchMind : AbstractPathMind
     {
         if (countNodes == 0)
         {
-            Path = BreadthFirstSearch(currentPos, boardInfo, goals[0]);
+            Path = BreadthFirstSearch(currentPos, boardInfo, boardInfo.Exit);
         }
 
-        if(!goals[0].Walkable || !currentPos.Walkable || Path[Path.Count-1].CellId != goals[0].CellId)
+        if(!goals[0].Walkable || !currentPos.Walkable || Path[Path.Count-1].CellId != boardInfo.Exit.CellId)
         {
             if(countNodes == 0)
                 UnityEngine.Debug.Log("No hay camino disponible o meta no accesible.");
