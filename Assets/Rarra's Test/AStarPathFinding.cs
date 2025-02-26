@@ -8,6 +8,7 @@ using UnityEngine;
 
 public class AStarPathFinding : AbstractPathMind
 {
+    private List<Node> _nodes;
     //CellInfo 
     //List pasados
     //List por buscar
@@ -21,6 +22,7 @@ public class AStarPathFinding : AbstractPathMind
 
     void Start()
     {
+        _nodes = new List<Node>();
         // Fill the lists
     }
 
@@ -54,9 +56,44 @@ public class AStarPathFinding : AbstractPathMind
     {
         // Loader->GameManager->Exit;
 
-        CellInfo ci = _boardInfo.Exit;
+        CellInfo cellInfo = _boardInfo.Exit;
 
-        //BoardInfo _boardInfo = new BoardInfo(1, 1, _boardManager);
+        int _totalCost = 0;
+
+        CellInfo _initialPosition = new CellInfo(0, 0);
+        //Node _initialNode = new Node(_totalCost, _initialPosition.WalkCost, _initialPosition, null);
+
+
+        // g = coste desde el inicio hasta ese momento
+        // h = coste de moverse desde el nodo anterior hasta el nuevo nodo
+        // f = h + g
+
+
+
+        CellInfo _actualCell = new CellInfo(0, 0);
+
+        int _actualColumn = 0, _actualRow = 0;
+
+        Debug.Log("\nColumna actual: " + _actualCell.ColumnId + "\nFila actual: " + _actualCell.RowId);
+
+
+
+
+        CellInfo _upperCell = new CellInfo(_actualColumn + 1, _actualRow);
+        CellInfo _lowerCell = new CellInfo(_actualColumn - 1, _actualRow);
+        CellInfo _rightCell = new CellInfo(_actualColumn, _actualRow + 1);
+        CellInfo _leftCell = new CellInfo(_actualColumn, _actualRow - 1);
+
+        if (true)
+        {
+            //Locomotion.
+        }
+
+
+
+
+
+
 
 
         /*
