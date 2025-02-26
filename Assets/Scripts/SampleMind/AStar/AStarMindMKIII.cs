@@ -13,9 +13,10 @@ using System.IO;
         if (sequencer.count == 0)
         {
             AStar(boardInfo, new Node(0, Heuristic(currentPos, boardInfo.Exit), currentPos, null), boardInfo.Exit);
+            UnityEngine.Debug.Log("Visited nodes: " + sequencer.visitedNodes);
         }
 
-        if (!goals[0].Walkable || !currentPos.Walkable || sequencer.List[sequencer.List.Count - 1].CellId != boardInfo.Exit.CellId)
+        if (!boardInfo.Exit.Walkable || !currentPos.Walkable || sequencer.List[sequencer.List.Count - 1].CellId != boardInfo.Exit.CellId)
         {
             if (sequencer.count == 0)
             {
@@ -47,6 +48,7 @@ using System.IO;
             actualNode = openList.OrderBy(n => n.f).First();
             openList.Remove(actualNode);
             closedSet.Add(actualNode.cell.CellId);
+            sequencer.visitedNodes++;
 
             // Check if goal is reached
             if (actualNode.cell.CellId == goal.CellId)
