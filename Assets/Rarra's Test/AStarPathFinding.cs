@@ -8,11 +8,11 @@ using UnityEngine;
 
 public class AStarPathFinding : AbstractPathMind
 {
-    private List<Node> _nodes;
+    private List<Node> _nodes; // closed list
     //CellInfo 
     //List pasados
     //List por buscar
-    private List<Node> unsearchedNodes;
+    private List<Node> _unsearchedNodes; // open list
 
     //Matrix of the board
 
@@ -23,6 +23,9 @@ public class AStarPathFinding : AbstractPathMind
     void Start()
     {
         _nodes = new List<Node>();
+
+        _unsearchedNodes = new List<Node>();
+
         // Fill the lists
     }
 
