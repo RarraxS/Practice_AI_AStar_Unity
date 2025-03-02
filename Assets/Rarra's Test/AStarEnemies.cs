@@ -1,21 +1,22 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Assets.Scripts;
 using Assets.Scripts.DataStructures;
 using UnityEngine;
 
-public class AStarPathFindingV2 : AbstractPathMind
+public class AStarEnemies : AbstractPathMind
 {
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     private static int Heuristic(CellInfo a, CellInfo b)
@@ -30,9 +31,24 @@ public class AStarPathFindingV2 : AbstractPathMind
 
     public override Locomotion.MoveDirection GetNextMove(BoardInfo boardInfo, CellInfo currentPos, CellInfo[] goals)
     {
-        if (goals == null || goals.Length== 0) { return Locomotion.MoveDirection.None; }
+        if (goals == null || goals.Length == 0) { return Locomotion.MoveDirection.None; }
 
-        CellInfo goal = goals[0]; // Cojo el primer objetivo
+        // itera el boardInfo Enemies y mapealos a CurrentPosition
+
+
+        List<CellInfo> enemyPositions = boardInfo.Enemies.Select(enemy => enemy.CurrentPosition()).ToList();
+        CellInfo goal = null;
+
+        if (enemyPositions.Count > 0)
+        {
+            // seleccionando el enemigo mas cercano
+            goal = enemyPositions.OrderBy(enemyPos => Heuristic(currentPos, enemyPos)).First();
+        }
+        else
+        {
+            // selecciono el objetivo mas cercano
+            goal = goals.OrderBy(itemGoal => Heuristic(currentPos, itemGoal)).First();
+        }
 
         // Setup del A*
         var openNodes = new List<Node>();
@@ -42,7 +58,7 @@ public class AStarPathFindingV2 : AbstractPathMind
         openNodes.Add(startNode);
 
         // mientras haya algo que visitar
-        while (openNodes.Count>0)
+        while (openNodes.Count > 0)
         {
             // ordeno los open nodes por F
             openNodes.Sort((a, b) => a.f.CompareTo(b.f)); // Ordena el openNodes por F de menor a mayor
@@ -64,7 +80,7 @@ public class AStarPathFindingV2 : AbstractPathMind
             }
 
             // sino estoy en el objetivo aun, tengo que calcular a traves de los vecinos
-            foreach(CellInfo neighbor in currentNode.cell.WalkableNeighbours(boardInfo))
+            foreach (CellInfo neighbor in currentNode.cell.WalkableNeighbours(boardInfo))
             {
                 // saltarme la iteracion de bucle, 
                 // si el vecino es nulo (se sale del tablero) o si ya he visitado ese vecino previamente...
