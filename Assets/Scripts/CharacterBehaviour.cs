@@ -1,4 +1,6 @@
-﻿using Assets.Scripts.DataStructures;
+﻿using System;
+using System.Diagnostics;
+using Assets.Scripts.DataStructures;
 using UnityEngine;
 
 namespace Assets.Scripts
@@ -33,7 +35,13 @@ namespace Assets.Scripts
             {
 
                 var boardClone = (BoardInfo)BoardManager.boardInfo.Clone();
+
+                Stopwatch stopwatch = new Stopwatch();
+                stopwatch.Start();
+
                 LocomotionController.SetNewDirection(PathController.GetNextMove(boardClone,LocomotionController.CurrentEndPosition(),new [] {this.currentTarget}));
+                stopwatch.Stop();
+                UnityEngine.Debug.Log($"Tiempo de ejecución del get next move en el character behaviour: {stopwatch.ElapsedMilliseconds} milisegundos");
             }
         }
 

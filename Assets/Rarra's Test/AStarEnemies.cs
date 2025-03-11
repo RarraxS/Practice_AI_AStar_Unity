@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Assets.Scripts;
 using Assets.Scripts.DataStructures;
@@ -50,6 +51,8 @@ public class AStarEnemies : AbstractPathMind
             goal = goals.OrderBy(itemGoal => Heuristic(currentPos, itemGoal)).First();
         }
 
+        UnityEngine.Debug.Log($"Distancia al primer objetivo: {Heuristic(currentPos, goal)}");
+
         // Setup del A*
         var openNodes = new List<Node>();
         var closedNodes = new HashSet<CellInfo>();
@@ -57,9 +60,12 @@ public class AStarEnemies : AbstractPathMind
 
         openNodes.Add(startNode);
 
+        UnityEngine.Debug.Log("La cantidad de nodos abiertos en la funcion antes de entrar al while son: " + openNodes.Count);
+
         // mientras haya algo que visitar
         while (openNodes.Count > 0)
         {
+            UnityEngine.Debug.Log("La cantidad de nodos abiertos en la iteracion actual son: " + openNodes.Count);
             // ordeno los open nodes por F
             openNodes.Sort((a, b) => a.f.CompareTo(b.f)); // Ordena el openNodes por F de menor a mayor
             Node currentNode = openNodes[0];

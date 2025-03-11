@@ -1,145 +1,100 @@
-using Assets.Scripts;
-using Assets.Scripts.DataStructures;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
-using System.Runtime.CompilerServices;
+using Assets.Scripts;
+using Assets.Scripts.DataStructures;
 using UnityEngine;
 
 public class AStarPathFinding : AbstractPathMind
 {
-    private List<Node> _nodes; // closed list
-    //CellInfo 
-    //List pasados
-    //List por buscar
-    private List<Node> _unsearchedNodes; // open list
-
-    //Matrix of the board
-
-    //Clase de costos ¿y posiciones?
-
-
-
+    // Start is called before the first frame update
     void Start()
     {
-        _nodes = new List<Node>();
-
-        _unsearchedNodes = new List<Node>();
-
-        // Fill the lists
+        
     }
 
+    // Update is called once per frame
     void Update()
     {
         
     }
 
-    public override Locomotion.MoveDirection GetNextMove(BoardInfo boardInfo, CellInfo currentPos, CellInfo[] goals)
+    private static int Heuristic(CellInfo a, CellInfo b)
     {
-        CalculateCosts(boardInfo);
-
-        if (!goals[0].Walkable || !currentPos.Walkable)
-        {
-            Debug.Log("No es posible llegar a la meta");
-            return Locomotion.MoveDirection.None;
-        }
-        else
-        {
-
-        }
-
-        //if (finishingPoint.RowId < currentPos.RowId) return Locomotion.MoveDirection.Down;
-        //else if (finishingPoint.RowId > currentPos.RowId) return Locomotion.MoveDirection.Up;
-        //else if (finishingPoint.ColumnId < currentPos.ColumnId) return Locomotion.MoveDirection.Left;
-
-        return Locomotion.MoveDirection.Right;
+        return Heuristic(a.ColumnId, a.RowId, b.ColumnId, b.RowId);
     }
 
-    private void CalculateCosts(BoardInfo _boardInfo)
+    private static int Heuristic(int x1, int y1, int x2, int y2)
     {
-        // Loader->GameManager->Exit;
+        return Mathf.Abs(x1 - x2) + Mathf.Abs(y1 - y2);
+    }
 
-        CellInfo cellInfo = _boardInfo.Exit;
+    public override Locomotion.MoveDirection GetNextMove(BoardInfo boardInfo, CellInfo currentPos, CellInfo[] goals)
+    {
+        if (goals == null || goals.Length== 0) { return Locomotion.MoveDirection.None; }
 
-        int _totalCost = 0;
+        CellInfo goal = goals[0]; // Cojo el primer objetivo
 
-        CellInfo _initialPosition = new CellInfo(0, 0);
-        Node _initialNode = new Node(_totalCost, _initialPosition.WalkCost, _initialPosition, null);
+        Debug.Log($"Distancia al primer objetivo: {Heuristic(currentPos, goal)}");
 
+        // Setup del A*
+        var openNodes = new List<Node>();
+        var closedNodes = new HashSet<CellInfo>();
+        var startNode = new Node(currentPos, null);
 
-        // g = coste desde el inicio hasta ese momento
-        // h = coste de moverse desde el nodo anterior hasta el nuevo nodo
-        // f = h + g
+        openNodes.Add(startNode);
 
-
-
-        CellInfo _actualCell = new CellInfo(0, 0);
-        Node _actualNode = new Node(_totalCost, 0, _actualCell, null);
-
-
-        int _actualColumn = 0, _actualRow = 0;
-
-        Debug.Log("\nColumna actual: " + _actualColumn + "\nFila actual: " + _actualRow);
-
-
-
-
-
-
-        
-
-        // Todo esto tiene que ir en una funcion que se repite hasta que se encuentra la meta
-
-        CellInfo _upperCell = new CellInfo(_actualColumn + 1, _actualRow);
-        Node _upperNode = new Node(_totalCost, _upperCell.WalkCost, _upperCell, _actualNode);
-
-        CellInfo _lowerCell = new CellInfo(_actualColumn - 1, _actualRow);
-        Node _lowerNode = new Node(_totalCost, _lowerCell.WalkCost, _lowerCell, _actualNode);
-
-        CellInfo _rightCell = new CellInfo(_actualColumn, _actualRow + 1);
-        Node _rightNode = new Node(_totalCost, _rightCell.WalkCost, _rightCell, _actualNode);
-
-        CellInfo _leftCell = new CellInfo(_actualColumn, _actualRow - 1);
-        Node _leftNode = new Node(_totalCost, _leftCell.WalkCost, _leftCell, _actualNode);
-
-        // Move
-        if (true)
+        // mientras haya algo que visitar
+        while (openNodes.Count>0)
         {
-            //Locomotion.
-        }
+            Debug.Log("La cantidad de nodos abiertos en la iteracion actual son: " + openNodes.Count);
+            // ordeno los open nodes por F
+            openNodes.Sort((a, b) => a.f.CompareTo(b.f)); // Ordena el openNodes por F de menor a mayor
+            Node currentNode = openNodes[0];
+            openNodes.RemoveAt(0);
 
+            // agregar a la lista de nodos visitados
+            closedNodes.Add(currentNode.cell);
 
-
-
-
-
-
-
-        /*
-         BOARD MANAGER TIENE UNA REFERENCIA A BOARD INFO, LLAMARLO DESDE AQUI
-         
-         EL CÓDIGO DEL BOARD MANAGER EN CUASTION
-
-         public void SetupScene(int seed, bool forPlanner, int enemyCount)
-        {
-            this.boardInfo = new BoardInfo(columns, rows, this);
-            this.boardInfo.SetupBoard(seed, forPlanner, this.wallCount, this.leverCount, enemyCount);
-        }
-         */
-
-
-        CellInfo goal;
-
-        goal = _boardInfo.Exit;//Acceder al objeto
-
-        for (int i = 0; i < _boardInfo.NumRows; i++)
-        {
-            for (int j = 0; j < _boardInfo.NumColumns; j++)
+            // he llegado al objetivo
+            if (currentNode.cell == goal)
             {
-                //node[i][j].h;
+                // reconstruir el camino desde el nodo final visitando sus padres
+                while (currentNode.parent != null && currentNode.parent.parent != null)
+                {
+                    currentNode = currentNode.parent;
+                }
+
+                return GetMoveDirection(currentPos, currentNode.cell);
+            }
+
+            // sino estoy en el objetivo aun, tengo que calcular a traves de los vecinos
+            foreach(CellInfo neighbor in currentNode.cell.WalkableNeighbours(boardInfo))
+            {
+                // saltarme la iteracion de bucle, 
+                // si el vecino es nulo (se sale del tablero) o si ya he visitado ese vecino previamente...
+                if (neighbor == null || closedNodes.Contains(neighbor)) continue;
+
+                float gCost = currentNode.g + neighbor.WalkCost;
+                float hCost = Heuristic(neighbor, goal);
+
+                // importante al construir el vecino, pasarmle como parent el currentNode...
+                Node neighborNode = new Node(gCost, hCost, neighbor, currentNode);
+
+                if (openNodes.Find(n => n.cell == neighbor && n.g <= gCost) != null) continue;
+
+                openNodes.Add(neighborNode);
             }
         }
 
-        //unsearchedNodes
+        return Locomotion.MoveDirection.None;
+    }
+
+    private Locomotion.MoveDirection GetMoveDirection(CellInfo start, CellInfo next)
+    {
+        if (next.ColumnId < start.ColumnId) return Locomotion.MoveDirection.Left;
+        if (next.ColumnId > start.ColumnId) return Locomotion.MoveDirection.Right;
+        if (next.RowId < start.RowId) return Locomotion.MoveDirection.Down;
+        if (next.RowId > start.RowId) return Locomotion.MoveDirection.Up;
+        return Locomotion.MoveDirection.None;
     }
 }

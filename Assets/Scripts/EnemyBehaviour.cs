@@ -1,5 +1,7 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Assets.Scripts;
 using Assets.Scripts.DataStructures;
 using UnityEngine;
@@ -37,10 +39,14 @@ namespace Assets.Scripts
             //-- Check if the enemy needs to move.
             if (LocomotionController.MoveNeed)
             {
-
+                Stopwatch stopwatch = new Stopwatch();
+                stopwatch.Start();
 
                 LocomotionController.SetNewDirection(PathController.GetNextMove(BoardManager.boardInfo,
                     LocomotionController.CurrentEndPosition(), null));
+
+                stopwatch.Stop();
+                UnityEngine.Debug.Log($"Tiempo de ejecución del get next move en el enemy behaviour: {stopwatch.ElapsedMilliseconds} milisegundos");
             }
         }
 

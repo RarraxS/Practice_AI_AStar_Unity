@@ -8,7 +8,7 @@ using System.Linq;
 public class BreadhtFirstSearchMind : AbstractPathMind
 {
     Sequencer sequencer = new Sequencer();
-      public override Locomotion.MoveDirection GetNextMove(BoardInfo boardInfo, CellInfo currentPos, CellInfo[] goals)
+    public override Locomotion.MoveDirection GetNextMove(BoardInfo boardInfo, CellInfo currentPos, CellInfo[] goals)
     {
         if (sequencer.count == 0)
         {
