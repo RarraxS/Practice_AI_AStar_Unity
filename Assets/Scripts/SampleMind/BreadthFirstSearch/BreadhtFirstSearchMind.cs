@@ -13,14 +13,14 @@ public class BreadhtFirstSearchMind : AbstractPathMind
         if (sequencer.count == 0)
         {
             sequencer.List = BreadthFirstSearch(currentPos, boardInfo, boardInfo.Exit);
-            UnityEngine.Debug.Log("Visited nodes: "+sequencer.visitedNodes);
+            UnityEngine.Debug.Log("(RAE) Visited nodes: "+sequencer.visitedNodes);
         }
 
         if(!goals[0].Walkable || !currentPos.Walkable || sequencer.List[sequencer.List.Count-1].CellId != boardInfo.Exit.CellId)
         {
             if(sequencer.count == 0)
             {
-                UnityEngine.Debug.Log("No hay camino disponible o meta no accesible.");
+                UnityEngine.Debug.Log("(RAE) No hay camino disponible o meta no accesible.");
                 sequencer.count = 1;
             }
 

@@ -18,16 +18,16 @@ public class HillClimbingFinished : AbstractPathMind
 
     public override Locomotion.MoveDirection GetNextMove(BoardInfo boardInfo, CellInfo currentPos, CellInfo[] goals)
     {
-        Debug.Log($"Current Position: {currentPos}");
+        Debug.Log($"(RAE) Current Position: {currentPos}");
         if (goals == null || goals.Length == 0 || (sequencer.List.Count > 0 && sequencer.List[sequencer.List.Count - 1].CellId != boardInfo.Exit.CellId))
         {
-            Debug.Log("No goals available. Returning None.");
+            Debug.Log("(RAE) No goals available. Returning None.");
             return Locomotion.MoveDirection.None;
         }
 
         // Obtener posiciones de los enemigos
         List<CellInfo> enemyPositions = boardInfo.Enemies.Select(enemy => enemy.CurrentPosition()).ToList();
-        Debug.Log($"Enemy Positions: {string.Join(", ", enemyPositions)}");
+        Debug.Log($"(RAE) Enemy Positions: {string.Join(", ", enemyPositions)}");
 
         CellInfo goal = null;
         CellInfo bestMove = null;
@@ -49,12 +49,12 @@ public class HillClimbingFinished : AbstractPathMind
             count++;
         }
 
-        Debug.Log($"Selected Goal: {goal}");
+        Debug.Log($"(RAE) Selected Goal: {goal}");
 
 
 
         Locomotion.MoveDirection direction = GetMoveDirection(currentPos, bestMove);
-        Debug.Log($"Moving {direction} from {currentPos} to {bestMove}");
+        Debug.Log($"(RAE) Moving {direction} from {currentPos} to {bestMove}");
         return direction;
     }
 
@@ -62,29 +62,29 @@ public class HillClimbingFinished : AbstractPathMind
     {
         CellInfo bestMove = current;
         int bestScore = Heuristic(current, end);
-        Debug.Log($"Current Position Heuristic Score: {bestScore}");
+        Debug.Log($"(RAE) Current Position Heuristic Score: {bestScore}");
 
         // Obtener vecinos
         var neighbors = current.WalkableNeighbours(info);
-        Debug.Log($"Neighbors Count: {neighbors.Count()}");
+        Debug.Log($"(RAE) Neighbors Count: {neighbors.Count()}");
 
         // Explorar vecinos y seleccionar el mejor basado en la heurística
         foreach (CellInfo neighbor in neighbors)
         {
             if (neighbor == null)
             {
-                Debug.Log("Skipping null neighbor");
+                Debug.Log("(RAE) Skipping null neighbor");
                 continue; // Evitar valores nulos
             }
 
             int score = Heuristic(neighbor, end);
-            Debug.Log($"Evaluating Neighbor {neighbor} with Score {score}");
+            Debug.Log($"(RAE) Evaluating Neighbor {neighbor} with Score {score}");
 
             if (score < bestScore) // Si el vecino está más cerca del objetivo, actualizar
             {
                 bestScore = score;
                 bestMove = neighbor;
-                Debug.Log($"New Best Move: {bestMove} with Score {bestScore}");
+                Debug.Log($"(RAE) New Best Move: {bestMove} with Score {bestScore}");
             }
         }
 

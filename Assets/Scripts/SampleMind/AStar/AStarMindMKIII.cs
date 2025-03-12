@@ -13,14 +13,14 @@ using System.IO;
         if (sequencer.count == 0)
         {
             AStar(boardInfo, new Node(0, Heuristic(currentPos, boardInfo.Exit), currentPos, null), boardInfo.Exit);
-            UnityEngine.Debug.Log("Visited nodes: " + sequencer.visitedNodes);
+            UnityEngine.Debug.Log("(RAE) Visited nodes: " + sequencer.visitedNodes);
         }
 
         if (!boardInfo.Exit.Walkable || !currentPos.Walkable || sequencer.List[sequencer.List.Count - 1].CellId != boardInfo.Exit.CellId)
         {
             if (sequencer.count == 0)
             {
-                UnityEngine.Debug.Log("No hay camino disponible o meta no accesible.");
+                UnityEngine.Debug.Log("(RAE) No hay camino disponible o meta no accesible.");
                 sequencer.count = 1;
             }
             return Locomotion.MoveDirection.None;
@@ -54,7 +54,6 @@ using System.IO;
             if (actualNode.cell.CellId == goal.CellId)
             {
                 sequencer.List = ReconstructPath(actualNode); // Reconstruct path
-                UnityEngine.Debug.Log("Path found!");
                 return;
             }
 
@@ -73,7 +72,6 @@ using System.IO;
             }
         }
 
-        UnityEngine.Debug.Log("Goal is unreachable.");
         sequencer.List.Clear(); // Clear path if no goal is found
     }
 
