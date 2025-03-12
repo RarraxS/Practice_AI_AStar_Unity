@@ -4,7 +4,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using Unity.VisualScripting;
 
 public class HillClimbingFinished : AbstractPathMind
 {
@@ -13,14 +12,14 @@ public class HillClimbingFinished : AbstractPathMind
         return Mathf.Abs(a.ColumnId - b.ColumnId) + Mathf.Abs(a.RowId - b.RowId);
     }
 
-    Sequencer sequencer;
+    Sequencer sequencer = new Sequencer();
     bool hasLookedForAGoal = false;
     int count = 0;
 
     public override Locomotion.MoveDirection GetNextMove(BoardInfo boardInfo, CellInfo currentPos, CellInfo[] goals)
     {
         Debug.Log($"Current Position: {currentPos}");
-        if (goals == null || goals.Length == 0)
+        if (goals == null || goals.Length == 0 || (sequencer.List.Count > 0 && sequencer.List[sequencer.List.Count - 1].CellId != boardInfo.Exit.CellId))
         {
             Debug.Log("No goals available. Returning None.");
             return Locomotion.MoveDirection.None;
@@ -41,24 +40,18 @@ public class HillClimbingFinished : AbstractPathMind
         else
         {
             goal = boardInfo.Exit;
-            if (hasLookedForAGoal)
-            {
-
-            }
-            else
+            if (!hasLookedForAGoal)
             {
                 sequencer.List = BreadthFirstSearch(currentPos, boardInfo, goal);
                 hasLookedForAGoal = true;
-                bestMove = sequencer.List[count];
-                count++;
-
-
             }
+            bestMove = sequencer.List[count];
+            count++;
         }
 
         Debug.Log($"Selected Goal: {goal}");
 
-        
+
 
         Locomotion.MoveDirection direction = GetMoveDirection(currentPos, bestMove);
         Debug.Log($"Moving {direction} from {currentPos} to {bestMove}");
