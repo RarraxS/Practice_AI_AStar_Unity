@@ -41,7 +41,7 @@ namespace Assets.Scripts
 
                 LocomotionController.SetNewDirection(PathController.GetNextMove(boardClone,LocomotionController.CurrentEndPosition(),new [] {this.currentTarget}));
                 stopwatch.Stop();
-                UnityEngine.Debug.Log($"Tiempo de ejecución del get next move en el character behaviour: {stopwatch.ElapsedMilliseconds} milisegundos");
+                UnityEngine.Debug.Log($"RAE: Tiempo de ejecución del get next move en el character behaviour: {stopwatch.ElapsedMilliseconds} milisegundos");
             }
         }
 
