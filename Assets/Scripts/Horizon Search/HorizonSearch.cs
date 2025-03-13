@@ -15,6 +15,7 @@ public class HorizonSearch : AbstractPathMind
     bool hasLookedForAGoal = false;
     int exploredNodes = 0;
     bool hasShownExploredNodes= false;
+    bool hasShownNodesFirstTime = false;
 
     public override Locomotion.MoveDirection GetNextMove(BoardInfo boardInfo, CellInfo currentPos, CellInfo[] goals)
     {
@@ -39,6 +40,12 @@ public class HorizonSearch : AbstractPathMind
             Debug.Log($"(RAE) Selected Goal: {goal.CellId}");
             if (numOfMoves == 0)
                 movements = HorizonS(currentPos, goal, boardInfo, searchDepth);
+
+            if(!hasShownNodesFirstTime)
+            {
+                Debug.Log($"(RAE) Open nodes first time: {exploredNodes}");
+                hasShownNodesFirstTime=true;
+            }
 
             // Move towards the goal using the pre-calculated path
             if (numOfMoves < movements.Count)
@@ -97,7 +104,7 @@ public class HorizonSearch : AbstractPathMind
             // If goal is found or depth limit is reached, stop
             if (actualState.cell.CellId == end.CellId || depth >= horizon)
             {
-                UnityEngine.Debug.Log(depth >= horizon ? "Cota de profundidad alcanzada" : "Estado encontrado");
+                UnityEngine.Debug.Log(depth >= horizon ? "(RAE) Depth max value reached" : "(RAE) State found (goal found)");
                 break;
             }
 
@@ -168,7 +175,7 @@ public class HorizonSearch : AbstractPathMind
 
     private Locomotion.MoveDirection GetMoveDirection(CellInfo start, CellInfo next)
     {
-        Debug.Log($"Moving from {start.CellId} to {next.CellId}");
+        Debug.Log($"(RAE) Moving from {start.CellId} to {next.CellId}");
 
         UnityEngine.Debug.Log(next.CellId);
         if (next.ColumnId < start.ColumnId) return Locomotion.MoveDirection.Left;
