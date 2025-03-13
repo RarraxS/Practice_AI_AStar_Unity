@@ -19,6 +19,8 @@ public class HorizonSearch : AbstractPathMind
         List<CellInfo> enemyPositions = boardInfo.Enemies.Select(enemy => enemy.CurrentPosition()).ToList();
         Debug.Log($"(RAE) Enemy Positions: {string.Join(", ", enemyPositions)}");
         CellInfo goal = null;
+
+
         if(!boardInfo.Exit.Walkable || !currentPos.Walkable)
         {
             Debug.Log($"(RAE) Invalid Path.");
