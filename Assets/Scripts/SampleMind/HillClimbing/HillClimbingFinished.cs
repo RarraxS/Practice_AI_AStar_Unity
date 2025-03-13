@@ -39,9 +39,9 @@ public class HillClimbingFinished : AbstractPathMind
         }
         else
         {
-            goal = boardInfo.Exit;
             if (!hasLookedForAGoal)
             {
+                goal = boardInfo.Exit;
                 sequencer.List = BreadthFirstSearch(currentPos, boardInfo, goal);
                 hasLookedForAGoal = true;
             }
