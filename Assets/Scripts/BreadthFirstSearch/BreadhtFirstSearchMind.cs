@@ -14,6 +14,7 @@ public class BreadhtFirstSearchMind : AbstractPathMind
         {
             sequencer.List = BreadthFirstSearch(currentPos, boardInfo, boardInfo.Exit);
             UnityEngine.Debug.Log("(RAE) Visited nodes: "+sequencer.visitedNodes);
+            UnityEngine.Debug.Log("(RAE) Nodes in path to goal:" + sequencer.List.Count());
         }
 
         if(!goals[0].Walkable || !currentPos.Walkable || sequencer.List[sequencer.List.Count-1].CellId != boardInfo.Exit.CellId)
