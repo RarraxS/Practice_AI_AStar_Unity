@@ -1,17 +1,9 @@
-using Palmmedia.ReportGenerator.Core;
-using System.Collections;
 using System.Collections.Generic;
-using System.Xml.Linq;
-using Unity.VisualScripting;
-using UnityEditor.Experimental.GraphView;
 using UnityEditor;
 using UnityEngine;
-using static UnityEditor.PlayerSettings;
-using UnityEngine.Analytics;
 using Assets.Scripts.DataStructures;
 using System.Linq;
 using Assets.Scripts;
-using static Assets.Scripts.BoardManager;
 
 public class HorizonSearch : AbstractPathMind
 {
@@ -25,13 +17,17 @@ public class HorizonSearch : AbstractPathMind
     public override Locomotion.MoveDirection GetNextMove(BoardInfo boardInfo, CellInfo currentPos, CellInfo[] goals)
     {
         List<CellInfo> enemyPositions = boardInfo.Enemies.Select(enemy => enemy.CurrentPosition()).ToList();
+        Debug.Log($"(RAE) Enemy Positions: {string.Join(", ", enemyPositions)}");
         CellInfo goal = null;
-
-        // If there are enemies, find the closest one and use Horizon Search
-        if (enemyPositions.Count > 0)
+        if(!boardInfo.Exit.Walkable || !currentPos.Walkable)
+        {
+            Debug.Log($"(RAE) Invalid Path.");
+            return Locomotion.MoveDirection.None;
+        }
+        else if (enemyPositions.Count > 0)
         {
             goal = enemyPositions.OrderBy(enemyPos => Heuristic(currentPos, enemyPos)).First();
-
+            Debug.Log($"(RAE) Selected Goal: {goal.CellId}");
             if (numOfMoves == 0)
                 movements = HorizonS(currentPos, goal, boardInfo, searchDepth);
 
@@ -53,6 +49,7 @@ public class HorizonSearch : AbstractPathMind
             if (!hasLookedForAGoal)
             {
                 goal = boardInfo.Exit;
+                Debug.Log($"(RAE) Selected Goal: {goal.CellId}");
                 sequencer.List = BreadthFirstSearch(currentPos, boardInfo, goal);
                 hasLookedForAGoal = true;
                 numOfMoves = 0;
@@ -160,6 +157,8 @@ public class HorizonSearch : AbstractPathMind
 
     private Locomotion.MoveDirection GetMoveDirection(CellInfo start, CellInfo next)
     {
+        Debug.Log($"Moving from {start.CellId} to {next.CellId}");
+
         UnityEngine.Debug.Log(next.CellId);
         if (next.ColumnId < start.ColumnId) return Locomotion.MoveDirection.Left;
         if (next.ColumnId > start.ColumnId) return Locomotion.MoveDirection.Right;
