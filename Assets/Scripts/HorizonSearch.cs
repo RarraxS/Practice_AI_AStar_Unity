@@ -13,6 +13,8 @@ public class HorizonSearch : AbstractPathMind
     List<CellInfo> movements = null;
     Sequencer sequencer = new Sequencer();
     bool hasLookedForAGoal = false;
+    int exploredNodes = 0;
+    bool hasShownExploredNodes= false;
 
     public override Locomotion.MoveDirection GetNextMove(BoardInfo boardInfo, CellInfo currentPos, CellInfo[] goals)
     {
@@ -20,6 +22,11 @@ public class HorizonSearch : AbstractPathMind
         Debug.Log($"(RAE) Enemy Positions: {string.Join(", ", enemyPositions)}");
         CellInfo goal = null;
 
+        if(enemyPositions.Count == 1 && !hasShownExploredNodes)
+        {
+            Debug.Log($"(RAE) Explored nodes until enemy 1: {exploredNodes}");
+            hasShownExploredNodes = true;
+        }
 
         if(!boardInfo.Exit.Walkable || !currentPos.Walkable)
         {
@@ -80,6 +87,8 @@ public class HorizonSearch : AbstractPathMind
 
         while (frontier.Count > 0)
         {
+            exploredNodes++;
+
             actualState = frontier.OrderBy(node => Heuristic(node.cell, end)).FirstOrDefault();
 
             if (actualState == null)
