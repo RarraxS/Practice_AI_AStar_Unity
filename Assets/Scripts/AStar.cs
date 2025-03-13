@@ -23,8 +23,6 @@ public class AStar : AbstractPathMind
         if (goals == null || goals.Length == 0) { return Locomotion.MoveDirection.None; }
 
         // itera el boardInfo Enemies y mapealos a CurrentPosition
-
-
         List<CellInfo> enemyPositions = boardInfo.Enemies.Select(enemy => enemy.CurrentPosition()).ToList();
         CellInfo goal = null;
 
@@ -46,7 +44,6 @@ public class AStar : AbstractPathMind
 
     private Locomotion.MoveDirection CalculateNextPosition(CellInfo _currentPos, CellInfo _goal, BoardInfo _boardInfo)
     {
-        // Setup del A*
         var openNodes = new List<Node>();
         var closedNodes = new HashSet<CellInfo>();
         var startNode = new Node(_currentPos, null);
@@ -60,11 +57,10 @@ public class AStar : AbstractPathMind
         {
 
             // ordeno los open nodes por F
-            openNodes.Sort((a, b) => a.f.CompareTo(b.f)); // Ordena el openNodes por F de menor a mayor
+            openNodes.Sort((a, b) => a.f.CompareTo(b.f));
             Node currentNode = openNodes[0];
             openNodes.RemoveAt(0);
 
-            // agregar a la lista de nodos visitados
             closedNodes.Add(currentNode.cell);
 
             // he llegado al objetivo
